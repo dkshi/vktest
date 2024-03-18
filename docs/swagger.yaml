@@ -1,0 +1,283 @@
+basePath: /
+definitions:
+  vktest.Actor:
+    properties:
+      actor_id:
+        type: integer
+      birth_date:
+        type: string
+      films:
+        items:
+          $ref: '#/definitions/vktest.Film'
+        type: array
+      gender:
+        type: string
+      name:
+        type: string
+    type: object
+  vktest.Admin:
+    properties:
+      adminname:
+        type: string
+      password:
+        type: string
+    required:
+    - adminname
+    - password
+    type: object
+  vktest.Film:
+    properties:
+      actors:
+        items:
+          $ref: '#/definitions/vktest.Actor'
+        type: array
+      description:
+        type: string
+      film_id:
+        type: integer
+      rating:
+        type: number
+      release_date:
+        type: string
+      title:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API Server for VK Intern test task
+  title: REST API for VK
+  version: "1.0"
+paths:
+  /actors/add:
+    post:
+      consumes:
+      - application/json
+      description: Add a new actor to the database
+      parameters:
+      - description: Actor object to be added (ignore actor_id and films)
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/vktest.Actor'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: id of the added actor
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Add a new actor
+      tags:
+      - actors
+  /actors/delete/{id}:
+    delete:
+      description: Delete an actor from the database
+      parameters:
+      - description: ID of the actor to be deleted
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Delete an actor
+      tags:
+      - actors
+  /actors/get:
+    get:
+      description: Get a list of all actors
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/vktest.Actor'
+            type: array
+      summary: Get all actors
+      tags:
+      - actors
+  /actors/update/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing actor in the database
+      parameters:
+      - description: ID of the actor to be updated
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Actor object with updated information (ignore actor_id and films)
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/vktest.Actor'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Update an existing actor
+      tags:
+      - actors
+  /auth/signIn:
+    post:
+      consumes:
+      - application/json
+      description: '"Authentificates admin and returns JWT-token"'
+      parameters:
+      - description: Adminname and password
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/vktest.Admin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: JWT-token
+          schema:
+            type: string
+      summary: '"Authentificate admin"'
+      tags:
+      - auth
+  /auth/signUp:
+    post:
+      consumes:
+      - application/json
+      description: '"Registers new admin"'
+      parameters:
+      - description: Adminname and password
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/vktest.Admin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Registration success
+          schema:
+            type: string
+      summary: '"Registration for admins"'
+      tags:
+      - auth
+  /films/add:
+    post:
+      consumes:
+      - application/json
+      description: Add a new film to the database
+      parameters:
+      - description: Film object to be added (ignore film_id)
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/vktest.Film'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: id of the added film
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Add a new film
+      tags:
+      - films
+  /films/delete/{id}:
+    delete:
+      description: Delete a film from the database
+      parameters:
+      - description: ID of the film to be deleted
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a film
+      tags:
+      - films
+  /films/get:
+    get:
+      description: Get a list of all films
+      parameters:
+      - collectionFormat: csv
+        description: Order of sorting
+        in: query
+        items:
+          type: string
+        name: order
+        type: array
+      - description: Sorting order
+        in: query
+        name: ascending
+        type: boolean
+      - description: Title to search
+        in: query
+        name: title
+        type: string
+      - description: Actor to search
+        in: query
+        name: actor
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/vktest.Film'
+            type: array
+      summary: Get all films
+      tags:
+      - films
+  /films/update/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing film in the database
+      parameters:
+      - description: ID of the film to be updated
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Film object with updated information (ignore film_id)
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/vktest.Film'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Update an existing film
+      tags:
+      - films
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

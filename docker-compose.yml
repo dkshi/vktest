@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  db:
+    restart: always
+    image: postgres
+    ports:
+      - "5432:5432"  
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: qwerty
+      POSTGRES_DB: postgres
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_SSLMODE=${DB_SSLMODE}
+    ports:
+      - "8080:8080"  
+    depends_on:
+      - db
